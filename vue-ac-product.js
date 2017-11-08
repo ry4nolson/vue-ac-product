@@ -1,4 +1,6 @@
 (function(){
+  var productStati = {};
+
   function apiCall(mode, filter, res){
     return new Promise(function(resolve, error){
 
@@ -10,6 +12,8 @@
         endpoint = "/api/v1/products?id=" + filter + "&expand=pictures";
       else if (mode == "category")
         endpoint = "/api/v1/categories/" + filter + "/products";
+      else if (mode == "status")
+        endpoint = "/api/v1/product_statuses/" + filter;
 
       var r = new XMLHttpRequest();
       r.open("GET", "https://" + VUE_AC_SECURE_DOMAIN + endpoint, true);
@@ -18,7 +22,7 @@
         if (r.readyState != 4 || r.status != 200)
           return;
 
-        res(r.responseText);
+        res && res(r.responseText);
 
         if (mode == "category"){
           var products = JSON.parse(r.responseText).products;
@@ -32,6 +36,41 @@
 
   Vue.component('vue-ac-product',{
     props: ["mode", "product-id", "product-ids", "category-id"],
+    methods: {
+      primaryPhoto: function(product){
+        var prod = product || this.product;
+
+        if (!prod)
+          return;
+
+        if (prod.pictures){
+          var primary = prod.pictures.filter(function(pic){ return pic.is_primary});
+
+          if (primary){
+            return primary[0].image_file;
+          }
+        }
+        return "";
+      },
+      productStatus: function(product){
+        // var prod = product || this.product;
+
+        // if (!prod.product_status_id)
+        //   return {};
+
+        // var statusId = prod.product_status_id;
+
+        // if (productStati[statusId])
+        //   return producStati[statusId];
+        // else {
+        //   apiCall("status", statusId).then(function(value){
+        //     return value;
+        //   })
+        // }
+        return "";
+
+      }
+    },
     data: function(){
       var self = this;
       var mode = self._props.mode || "single"; 
@@ -63,7 +102,6 @@
 
       if (mode == "single"){
         return {
-          products: [],
           product: { /* populated via ajax */}
         }
       }
