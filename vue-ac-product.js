@@ -68,7 +68,9 @@
     }
   });
 
-  new Vue({
-    el : "#app"
-  });
+  if (!EXISTING_VUE_APP){
+    new Vue({
+      el : VUE_ROOT
+    });
+  }
 })();
