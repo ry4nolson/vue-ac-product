@@ -22,14 +22,12 @@
 
         if (mode == "category"){
           var products = JSON.parse(r.responseText).products;
-          return new Promise(function(resolve){
-            apiCall("multiple", products.map(function(item) { return item.id}).join("+OR+"), res);
-          });
+            apiCall("multiple", products.map(function(item) { return item.id}).join("+OR+"), resolve);
         } else 
           resolve(r.responseText);
       };
       r.send(null);
-    })
+    });
   }
 
   Vue.component('vue-ac-product',{
