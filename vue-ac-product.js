@@ -1,6 +1,5 @@
 (function(){
   function apiCall(mode, filter){
-    console.log(mode, filter);
     return new Promise(function(resolve, error){
 
       var endpoint;
@@ -16,7 +15,8 @@
       r.open("GET", "https://" + VUE_AC_SECURE_DOMAIN + endpoint, true);
       r.setRequestHeader("x-ac-auth-token", VUE_AC_API_KEY);
       r.onreadystatechange = function () {
-        if (r.readyState != 4 || r.status != 200) return;
+        if (r.readyState != 4 || r.status != 200)
+          return;
         resolve(r.responseText);
       };
       r.send(null);
@@ -28,7 +28,7 @@
     data: function(){
       var self = this;
       var mode = self._props.mode || "single"; 
-      var filter; // = self._props.productId;
+      var filter;
 
       switch(mode){
         case "category":
@@ -52,8 +52,6 @@
           self.products = JSON.parse(value).products;
 
         self.$el.setAttribute && self.$el.setAttribute("style", "");
-
-        console.log(self);
       });
 
       if (mode == "single"){
@@ -63,12 +61,12 @@
         }
       }
       return {
-        products: [ { item_name: "test"} ]
+        products: []
       }
     }
   });
 
-  if (!EXISTING_VUE_APP){
+  if (!window.EXISTING_VUE_APP || !EXISTING_VUE_APP){
     new Vue({
       el : VUE_ROOT
     });
