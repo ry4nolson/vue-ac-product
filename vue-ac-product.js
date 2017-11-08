@@ -34,8 +34,27 @@
     });
   }
 
+  //from https://bost.ocks.org/mike/shuffle/
+  function shuffle(array) {
+    var m = array.length, t, i;
+
+    // While there remain elements to shuffle…
+    while (m) {
+
+      // Pick a remaining element…
+      i = Math.floor(Math.random() * m--);
+
+      // And swap it with the current element.
+      t = array[m];
+      array[m] = array[i];
+      array[i] = t;
+    }
+
+    return array;
+  }
+
   Vue.component('vue-ac-product',{
-    props: ["mode", "product-id", "product-ids", "category-id"],
+    props: ["mode", "product-id", "product-ids", "category-id", "random"],
     methods: {
       primaryPhoto: function(product){
         var prod = product || this.product;
@@ -92,10 +111,12 @@
       apiCall(mode, filter).then(function(value){
         if (mode == "single")
           self.product = JSON.parse(value);
-        else if (mode == "multiple")
+        else if (mode == "multiple" || mode =="category"){
           self.products = JSON.parse(value).products;
-        else if (mode == "category")
-          self.products = JSON.parse(value).products;
+          if (self._props.random){
+            self.products = shuffle(self.products);
+          }
+        }
 
         self.$el.setAttribute && self.$el.setAttribute("style", "");
       });
