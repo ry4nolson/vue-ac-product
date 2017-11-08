@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+  </head>
+  <body>
+    <div id="app">
+
+      <vue-ac-product style="display:none" mode="single" product-id="26" inline-template>
+        <div>
+          <div v-for="(value, key) in product">
+            {{key}} : {{value}}
+          </div>
+          {{product.item_name}}
+        </div>
+      </vue-ac-product>
+      <hr>
+
+      <vue-ac-product style="display:none" mode="multiple" product-ids="26,27" inline-template>
+        <div>
+          <div v-for="product in products">
+            {{product.item_name }}
+          </div>
+        </div>
+      </vue-ac-product>
+<hr>
+      <vue-ac-product style="display:none" mode="category" category-id="25" inline-template>
+        <div>
+          <div v-for="product in products">
+            {{product.item_name}}
+          </div>
+        </div>
+      </vue-ac-product>
+    </div>
+    <script>
+      //api key should only have access to read catalog data.
+      var VUE_AC_API_KEY = "";
+      var VUE_AC_SECURE_DOMAIN = "";
+    </script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.min.js"></script>
+    <script src="vue-ac-product.js"></script>
+  </body>
+</html>
