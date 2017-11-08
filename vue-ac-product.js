@@ -1,13 +1,13 @@
 (function(){
-  function apiCall(mode, filter){
+  function apiCall(mode, filter, res){
     return new Promise(function(resolve, error){
 
       var endpoint;
       
       if (mode == "single")
-        endpoint = "/api/v1/products/" + filter;
+        endpoint = "/api/v1/products/" + filter + "?expand=pictures";
       else if (mode == "multiple")
-        endpoint = "/api/v1/products?id=" + filter;
+        endpoint = "/api/v1/products?id=" + filter + "&expand=pictures";
       else if (mode == "category")
         endpoint = "/api/v1/categories/" + filter + "/products";
 
@@ -17,7 +17,16 @@
       r.onreadystatechange = function () {
         if (r.readyState != 4 || r.status != 200)
           return;
-        resolve(r.responseText);
+
+        res(r.responseText);
+
+        if (mode == "category"){
+          var products = JSON.parse(r.responseText).products;
+          return new Promise(function(resolve){
+            apiCall("multiple", products.map(function(item) { return item.id}).join("+OR+"), res);
+          });
+        } else 
+          resolve(r.responseText);
       };
       r.send(null);
     })
