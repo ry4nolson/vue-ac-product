@@ -7,10 +7,11 @@
 
       <vue-ac-product style="display:none" mode="single" product-id="26" inline-template>
         <div>
-          <div v-for="(value, key) in product">
-            {{key}} : {{value}}
-          </div>
           {{product.item_name}}
+          <div>Available properties: </div>
+          <span v-for="(value, key) in product">
+            <code>{{key}}</code>:{{value}} &nbsp;
+          </span>
         </div>
       </vue-ac-product>
       <hr>
@@ -22,7 +23,7 @@
           </div>
         </div>
       </vue-ac-product>
-<hr>
+      <hr>
       <vue-ac-product style="display:none" mode="category" category-id="25" inline-template>
         <div>
           <div v-for="product in products">
