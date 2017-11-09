@@ -49,7 +49,7 @@ include vue 2.x (if you haven't already) ex:
 ### initialize
 ```html
 <script>
-  
+  // can be a single or multiple element selector
   var VUE_ROOT = "#app";
   //api key should only have access to read catalog data.
   var VUE_AC_API_KEY = "";

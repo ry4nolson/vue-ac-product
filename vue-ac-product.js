@@ -1,19 +1,19 @@
 (function(){
   var productStati = {};
 
-  function apiCall(mode, filter, res){
+  function apiCall(mode, idOrIds, filter, res){
     return new Promise(function(resolve, error){
 
       var endpoint;
       
       if (mode == "single")
-        endpoint = "/api/v1/products/" + filter + "?expand=pictures";
+        endpoint = "/api/v1/products/" + idOrIds + "?expand=pictures&" + filter;
       else if (mode == "multiple")
-        endpoint = "/api/v1/products?id=" + filter + "&expand=pictures";
+        endpoint = "/api/v1/products?id=" + idOrIds + "&expand=pictures&" + filter;
       else if (mode == "category")
-        endpoint = "/api/v1/categories/" + filter + "/products";
+        endpoint = "/api/v1/categories/" + idOrIds + "/products?" + filter;
       else if (mode == "status")
-        endpoint = "/api/v1/product_statuses/" + filter;
+        endpoint = "/api/v1/product_statuses/" + idOrIds;
 
       var r = new XMLHttpRequest();
       r.open("GET", "https://" + VUE_AC_SECURE_DOMAIN + endpoint, true);
@@ -26,7 +26,7 @@
 
         if (mode == "category"){
           var products = JSON.parse(r.responseText).products;
-            apiCall("multiple", products.map(function(item) { return item.id}).join("+OR+"), resolve);
+            apiCall("multiple", products.map(function(item) { return item.id}).join("+OR+"), filter, resolve);
         } else 
           resolve(r.responseText);
       };
@@ -54,7 +54,7 @@
   }
 
   Vue.component('vue-ac-product',{
-    props: ["mode", "product-id", "product-ids", "category-id", "random"],
+    props: ["mode", "product-id", "product-ids", "category-id", "filter", "random"],
     methods: {
       primaryPhoto: function(product){
         var prod = product || this.product;
@@ -93,22 +93,23 @@
     data: function(){
       var self = this;
       var mode = self._props.mode || "single"; 
-      var filter;
+      var filter = self._props.filter || "";
+      var idOrIds;
 
       switch(mode){
         case "category":
-          filter = self._props.categoryId;
+          idOrIds = self._props.categoryId;
           break;
         case "multiple":
-          filter = self._props.productIds.split(",").join("+OR+");
+          idOrIds = self._props.productIds.split(",").join("+OR+");
           break;
         case "single":
         default:
-          filter = self._props.productId;
+          idOrIds = self._props.productId;
           break;
       }
 
-      apiCall(mode, filter).then(function(value){
+      apiCall(mode, idOrIds, filter).then(function(value){
         if (mode == "single")
           self.product = JSON.parse(value);
         else if (mode == "multiple" || mode =="category"){
@@ -133,8 +134,12 @@
   });
 
   if (!window.EXISTING_VUE_APP || !EXISTING_VUE_APP){
-    new Vue({
-      el : VUE_ROOT
+
+    //not elegant, but this allows for using the component in different parts of a page in a non-Vue app/site.
+    document.querySelectorAll(VUE_ROOT).forEach(function(element) {
+      new Vue({
+        el : element
+      });
     });
   }
 })();
